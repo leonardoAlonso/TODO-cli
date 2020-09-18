@@ -162,4 +162,7 @@ pip-selfcheck.json
 # Ignore all local history of files
 .history
 
+# No sqllite
+*.db
+
 # End of https://www.toptal.com/developers/gitignore/api/python,virtualenv,visualstudiocode
