@@ -1,17 +1,18 @@
 #!usr/bin/env python
 
 from tabulate import tabulate
-from datetime import datetime
 from db_connection import database, List, Task
 from colors import bcolors
 import click
 import peewee
 
-MODELS = [ List, Task ]
+MODELS = [List, Task]
+
 
 @click.group()
 def main():
     pass
+
 
 @main.command()
 def init():
@@ -20,6 +21,7 @@ def init():
         database.create_tables(MODELS)
     print(bcolors.HEADER + 'TODO-cli ready to be useed')
     print("Use --help to get all possible commands")
+
 
 @main.command()
 @click.argument('list_name')
@@ -35,14 +37,16 @@ def create_list(list_name):
         except peewee.IntegrityError:
             print(bcolors.FAIL + 'You already has a list with this name \U0001F616')
 
+
 @main.command()
 def get_all_list():
     """Get all list names"""
-    for l in List.select():
-        print(tabulate([[bcolors.OKGREEN + str(l.id),
-                         bcolors.OKGREEN + l.list_name,
-                         bcolors.OKGREEN + l.creation_date.strftime('%m/%d/%Y')]],
-                         headers=[bcolors.HEADER + 'ID', bcolors.HEADER + 'Name', bcolors.HEADER + 'Creation date']))
+    for _list in List.select():
+        print(tabulate([[bcolors.OKGREEN + str(_list.id),
+                         bcolors.OKGREEN + _list.list_name,
+                         bcolors.OKGREEN + _list.creation_date.strftime('%m/%d/%Y')]],
+                       headers=[bcolors.HEADER + 'ID', bcolors.HEADER + 'Name', bcolors.HEADER + 'Creation date']))
+
 
 if __name__ == '__main__':
     main()
