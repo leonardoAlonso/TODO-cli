@@ -1,7 +1,6 @@
 #!usr/bin/env python
 
 import unittest
-import peewee
 from test_common import TestCommon
 from database_connection.db_connection import List, Task
 
