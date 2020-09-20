@@ -6,7 +6,12 @@ import peewee
 database = peewee.SqliteDatabase('todoCLI.db')
 
 
-class List(peewee.Model):
+class BaseModel(peewee.Model):
+    class Meta:
+        database = database
+
+
+class List(BaseModel):
     list_name = peewee.CharField(max_length=50, unique=True, null=True)
     creation_date = peewee.DateField(default=datetime.now())
 
@@ -14,12 +19,11 @@ class List(peewee.Model):
         return self.list_name
 
     class Meta:
-        database = database  # this model uses todoCLI.db
         db_table = 'list'
 
 
-class Task(peewee.Model):
-    list_id = peewee.ForeignKeyField(List, backref='task')
+class Task(BaseModel):
+    list_id = peewee.ForeignKeyField(List, backref='task', on_delete='CASCADE')
     desc = peewee.CharField(max_length=200, null=False)
     state = peewee.BooleanField(default=False)
 
@@ -27,5 +31,4 @@ class Task(peewee.Model):
         return '{} task for {} list'.format(self.desc, self.list_id)
 
     class Meta:
-        database = database  # this model uses todoCLI.db
         db_table = 'task'
