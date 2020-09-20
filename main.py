@@ -1,7 +1,7 @@
 #!usr/bin/env python
 
 from tabulate import tabulate
-from db_connection import database, List, Task
+from database_connection.db_connection import database, List, Task
 from colors import bcolors
 import click
 import peewee
@@ -19,7 +19,7 @@ def init():
     """Creates the tables and the database connection"""
     with database:
         database.create_tables(MODELS)
-    print(bcolors.HEADER + 'TODO-cli ready to be useed')
+    print(bcolors.OKGREEN + 'TODO-cli ready to be useed')
     print("Use --help to get all possible commands")
 
 
@@ -46,6 +46,18 @@ def get_all_list():
                          bcolors.OKGREEN + _list.list_name,
                          bcolors.OKGREEN + _list.creation_date.strftime('%m/%d/%Y')]],
                        headers=[bcolors.HEADER + 'ID', bcolors.HEADER + 'Name', bcolors.HEADER + 'Creation date']))
+
+
+@main.command()
+@click.argument('list_name')
+def delete_list(list_name):
+    """Allows to delete a List based on list name.
+    This will delete all task related /U0001F6A8"""
+    _list = List.get_or_none(List.list_name == list_name)
+    if not _list:
+        print(bcolors.FAIL + "This list does not exist \U0001F625")
+    _list.delete().execute()
+    print(bcolors.OKGREEN + "The list has been deleted \U0001F5D1")
 
 
 if __name__ == '__main__':
