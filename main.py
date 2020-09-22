@@ -61,5 +61,12 @@ def delete_list(list_name):
     click.echo(click.style("The list has been deleted \U0001F5D1", fg='green'))
 
 
+@main.command()
+@click.option('-l', '--list', help='The name of the list where you can add a task')
+@click.argumen('task_name')
+def add_task(list, task_name):
+    pass
+
+
 if __name__ == '__main__':
     main()
