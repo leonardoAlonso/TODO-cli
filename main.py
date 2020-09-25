@@ -55,17 +55,25 @@ def delete_list(list_name):
         - argument list_name
     """
     _list = List.get_or_none(List.list_name == list_name)
-    if not _list:
-        click.echo(click.style("This list does not exist \U0001F625"), fg='red')
-    _list.delete().execute()
-    click.echo(click.style("The list has been deleted \U0001F5D1", fg='green'))
+    try:
+        _list.delete().execute()
+        click.echo(click.style("The list has been deleted \U0001F5D1", fg='green'))
+    except AttributeError:
+        click.echo(click.style("This list does not exist \U0001F625", fg='red'))
 
 
 @main.command()
-@click.option('-l', '--list', help='The name of the list where you can add a task')
-@click.argumen('task_name')
-def add_task(list, task_name):
-    pass
+@click.option('-l', '--listname', help='The name of the list where you can add a task')
+@click.argument('task')
+def add_task(listname, task):
+    _list = List.get_or_none(List.list_name == listname)
+    try:
+        task = Task.create(list_id=_list, desc=task)
+        click.echo(click.style("Success! \U0001F44D", fg='green'))
+    except AttributeError:
+        click.echo(click.style('This list does not exist \U0001F625', fg='red'))
+    except peewee.IntegrityError as e:
+        click.echo(click.style('Error: ' + e, fg='red'))
 
 
 if __name__ == '__main__':
