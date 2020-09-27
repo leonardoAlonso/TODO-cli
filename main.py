@@ -76,5 +76,23 @@ def add_task(listname, task):
         click.echo(click.style('Error: ' + e, fg='red'))
 
 
+@main.command()
+@click.option('-l', '--listname', help='The name of the list where you can add a task')
+def see_task_list(listname):
+    _list = List.get_or_none(List.list_name == listname)
+    try:
+        for task in _list.task:
+            click.echo(tabulate([[click.style(str(task.id), fg='blue'),
+                                  click.style(task.desc, fg='green'),
+                                  click.style('\U00002705' if task.desc is True else '\U0000274C', fg='green')]],
+                                headers=[click.style('ID', fg='red'),
+                                         click.style('Name', fg='red'),
+                                         click.style('State', fg='red')]))
+    except AttributeError:
+        click.echo(click.style('This list does not exist \U0001F625', fg='red'))
+    except peewee.IntegrityError as e:
+        click.echo(click.style('Error: ' + e, fg='red'))
+
+
 if __name__ == '__main__':
     main()
