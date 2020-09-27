@@ -94,5 +94,19 @@ def see_task_list(listname):
         click.echo(click.style('Error: ' + e, fg='red'))
 
 
+@main.command()
+@click.option('-l', '--listname', help='The name of the list where you can add a task')
+@click.argument('task_id')
+def set_task_done(listname, task_id):
+    _list = List.get_or_none(List.list_name == listname)
+    try:
+        task = Task.select().where(Task.list_id == _list.id, Task.id == task_id).first()
+        if task is not None:
+            pass
+        click.echo(click.style('This task does not exist \U0001F625', fg='red'))
+    except AttributeError:
+        click.echo(click.style('This list does not exist \U0001F625', fg='red'))
+
+
 if __name__ == '__main__':
     main()
