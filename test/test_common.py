@@ -17,4 +17,6 @@ class TestCommon(unittest.TestCase):
         test_db.create_tables(MODELS)
 
     def tearDown(self):
+        test_db.drop_tables(MODELS)
         test_db.close()
+        test_db.create_tables(MODELS)
