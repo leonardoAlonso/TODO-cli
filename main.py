@@ -38,13 +38,17 @@ def create_list(list_name):
 @main.command()
 def get_all_list():
     """Get all list names"""
+    table = []
     for _list in List.select():
-        click.echo(tabulate([[click.style(str(_list.id), fg='green'),
-                              click.style(_list.list_name, fg='green'),
-                              click.style(_list.creation_date.strftime('%m/%d/%Y'), fg='green')]],
-                            headers=[click.style('ID', fg='red'),
-                                     click.style('Name', fg='red'),
-                                     click.style('Creation date', fg='red')]))
+        table.append([
+            click.style(str(_list.id), fg='green'),
+            click.style(_list.list_name, fg='green'),
+            click.style(_list.creation_date.strftime('%m/%d/%Y'), fg='green')
+        ])
+    click.echo(tabulate(table,
+                        headers=[click.style('ID', fg='red'),
+                                 click.style('Name', fg='red'),
+                                 click.style('Creation date', fg='red')]))
 
 
 @main.command()
@@ -81,13 +85,17 @@ def add_task(listname, task):
 def see_task_list(listname):
     _list = List.get_or_none(List.list_name == listname)
     try:
+        table = []
         for task in _list.task:
-            click.echo(tabulate([[click.style(str(task.id), fg='blue'),
-                                  click.style(task.desc, fg='green'),
-                                  click.style('\U00002705' if task.desc is True else '\U0000274C', fg='green')]],
-                                headers=[click.style('ID', fg='red'),
-                                         click.style('Name', fg='red'),
-                                         click.style('State', fg='red')]))
+            table.append([
+                click.style(str(task.id), fg='blue'),
+                click.style(task.desc, fg='green'),
+                click.style(
+                    '\U00002705' if task.state else '\U0000274C', fg='green')
+            ])
+        click.echo(tabulate(table, headers=[click.style('ID', fg='red'),
+                                            click.style('Name', fg='red'),
+                                            click.style('State', fg='red')]))
     except AttributeError:
         click.echo(click.style('This list does not exist \U0001F625', fg='red'))
     except peewee.IntegrityError as e:
@@ -98,12 +106,15 @@ def see_task_list(listname):
 @click.option('-l', '--listname', help='The name of the list where you can add a task')
 @click.argument('task_id')
 def set_task_done(listname, task_id):
+    """Set some task as done, use de id of task and task list name"""
     _list = List.get_or_none(List.list_name == listname)
     try:
         task = Task.select().where(Task.list_id == _list.id, Task.id == task_id).first()
-        if task is not None:
-            pass
-        click.echo(click.style('This task does not exist \U0001F625', fg='red'))
+        if task is None:
+            click.echo(click.style('This task does not exist \U0001F625', fg='red'))
+        task.state = True
+        task.save()
+        click.echo(click.style('Task done \U0001F44D', fg='green'))
     except AttributeError:
         click.echo(click.style('This list does not exist \U0001F625', fg='red'))
 
