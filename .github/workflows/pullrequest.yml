@@ -1,43 +1,22 @@
-name: PR Merge on Schedule
+name: Issue creation
 
 on:
-  pull_request:
-    branches:
-      - master
-  pull_request_review:
-    branches:
-      - master
-  issue_comment:
-    branches:
-      - master
+  issues:
+    types: [ opened ]
+  
+    jobs:
+      interaction:
+        runs-on: ubuntu-latest
 
-jobs:
-  prhelper_schedule:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Run PR Helper on Schedule
-      id: runprhelperonschedule
-      uses: Matticusau/pr-helper@v1.2.3
-      with:
-        repo-token: ${{ secrets.GHACTION_PAT }}
-        enable-prmerge-automation: true
-        enable-prcomment-automation: false
-        enable-prlabel-automation: true
-        enable-prreviewer-frontmatter: true
-        enable-welcomemessage: true
-        welcome-message: "Thanks for your contribution! Make sure you've followed CONTRIBUTING rules"
-        prmerge-requireallchecks: true
-        prmerge-requirereviewcount: 1
-        prmerge-method: 'merge'
-        prmerge-deletebranch: 'true'
-        prmerge-deletebranch-config: ''
-        prmerge-pathcheck: true
-        prmerge-allowpaths: '{"any":["articles/**"]}'
-        prreviewer-authorkey: 'author'
-        prreviewer-githubuserfromauthorfile: true
-        prreviewer-authorfilepath: '_data/authors.yaml'
-        prlabel-default: 'pr-onhold'
-        prlabel-ready: 'pr-ready'
-        prlabel-onhold: 'pr-onhold'
-        prlabel-reviewrequired: 'review-required'
-        prlabel-automerge: 'auto-merge'
+        steps:
+          - uses: actions/issue-creation@v1
+            with:
+              repo-token: ${{ secrets.GITHUB_TOKEN }}
+              issue-message: |
+                Takyou for posting an issue
+
+                Please make sure that there is no other related issue
+              pr-message: |
+                Thank you for your contribution
+
+                Please folow the CONTRIBUTION.md rules
