@@ -1,16 +1,15 @@
 name: PR Merge on Schedule
 
 on:
-  schedule:
-    pull_request:
-      branches:
-        - master
-    pull_request_review:
-      branches:
-        - master
-    issue_comment:
-      branches:
-        - master
+  pull_request:
+    branches:
+      - master
+  pull_request_review:
+    branches:
+      - master
+  issue_comment:
+    branches:
+      - master
 
 jobs:
   prhelper_schedule:
