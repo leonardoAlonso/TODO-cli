@@ -70,10 +70,11 @@ def delete_list(list_name):
 @click.option('-l', '--listname', help='The name of the list where you can add a task')
 @click.argument('task')
 def add_task(listname, task):
+    """Add new task, -l <list_name> "task" """
     _list = List.get_or_none(List.list_name == listname)
     try:
         task = Task.create(list_id=_list, desc=task)
-        click.echo(click.style("Success! \U0001F44D", fg='green'))
+        click.echo(click.style("Task added in %s ! \U0001F44D" % listname, fg='green'))
     except AttributeError:
         click.echo(click.style('This list does not exist \U0001F625', fg='red'))
     except peewee.IntegrityError as e:
@@ -82,7 +83,8 @@ def add_task(listname, task):
 
 @main.command()
 @click.option('-l', '--listname', help='The name of the list where you can add a task')
-def see_task_list(listname):
+def get_task_list(listname):
+    """See al task in a list -l <list_name>"""
     _list = List.get_or_none(List.list_name == listname)
     try:
         table = []
@@ -90,11 +92,18 @@ def see_task_list(listname):
             table.append([
                 click.style(str(task.id), fg='blue'),
                 click.style(task.desc, fg='green'),
+                click.style(task.creation_date.strftime(
+                    '%m/%d/%Y'), fg='green'),
                 click.style(
                     '\U00002705' if task.state else '\U0000274C', fg='green')
             ])
+        if not table:
+            click.echo(click.style(
+                'No task in %s \U0001F644 \nAdd new task usigng add-task option \U0001F446' % (listname), fg='red'))
         click.echo(tabulate(table, headers=[click.style('ID', fg='red'),
                                             click.style('Name', fg='red'),
+                                            click.style(
+                                                'Creation Date', fg='red'),
                                             click.style('State', fg='red')]))
     except AttributeError:
         click.echo(click.style('This list does not exist \U0001F625', fg='red'))

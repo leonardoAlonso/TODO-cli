@@ -26,6 +26,7 @@ class Task(BaseModel):
     list_id = peewee.ForeignKeyField(List, backref='task', on_delete='CASCADE')
     desc = peewee.CharField(max_length=200, null=False)
     state = peewee.BooleanField(default=False)
+    creation_date = peewee.DateField(default=datetime.now())
 
     def __str__(self):
         return '{} task for {} list'.format(self.desc, self.list_id)
